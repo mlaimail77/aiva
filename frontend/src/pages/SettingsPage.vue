@@ -5,6 +5,7 @@ import AppHeader from '../components/AppHeader.vue'
 import CvSelect from '../components/CvSelect.vue'
 import { useSettingsStore } from '../stores/settings'
 import type { Settings } from '../types'
+import { DEFAULT_OPENROUTER_API_KEY, DEFAULT_VISION_MODEL, OPENROUTER_MODELS, VISION_MODELS } from '../types'
 
 const router = useRouter()
 const store = useSettingsStore()
@@ -15,13 +16,12 @@ const testResult = ref<string | null>(null)
 const form = ref<Settings>({
   cartesia: { api_key: '', voice_id: '', ws_url: 'wss://api.cartesia.ai/tts/websocket' },
   livekit: { url: '', api_key: '', api_secret: '' },
-  llm: { api_key: '', model: 'google/gemini-2.0-flash-001', temperature: 0.7 },
+  llm: { api_key: DEFAULT_OPENROUTER_API_KEY, model: 'google/gemini-2.0-flash-001', temperature: 0.7, vision_api_key: DEFAULT_OPENROUTER_API_KEY, vision_model: DEFAULT_VISION_MODEL },
   tts: { model: 'sonic-3', voice: 'cartesia' },
   asr: { model_size: 'base', language: 'auto', device: 'cpu' },
   inference: { grpc_addr: 'localhost:50051' },
 })
 
-// Password visibility toggles
 const showTokens = ref<Record<string, boolean>>({})
 
 function toggleShow(key: string) {
@@ -31,7 +31,10 @@ function toggleShow(key: string) {
 onMounted(async () => {
   await store.fetch().catch(() => {})
   if (store.settings) {
-    form.value = JSON.parse(JSON.stringify(store.settings))
+    const s = JSON.parse(JSON.stringify(store.settings))
+    if (!s.llm.vision_api_key) s.llm.vision_api_key = DEFAULT_OPENROUTER_API_KEY
+    if (!s.llm.vision_model) s.llm.vision_model = DEFAULT_VISION_MODEL
+    form.value = s
   }
 })
 
@@ -65,14 +68,59 @@ async function test() {
   <div class="min-h-screen bg-cv-base">
     <AppHeader showBack :breadcrumb="['角色列表', '系统设置']" />
 
-    <main class="max-w-[800px] mx-auto px-8 py-10">
+    <main class="max-w-[900px] mx-auto px-8 py-10">
       <h1 class="text-xl font-semibold text-cv-text mb-1">系统设置</h1>
       <p class="text-[13px] text-cv-text-muted mb-8">配置服务凭证和默认模型参数，所有角色共享</p>
 
       <div class="flex flex-col gap-6">
-        <!-- Cartesia -->
+        <!-- OpenRouter LLM -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">语音合成服务 (Cartesia)</h3>
+          <h3 class="text-sm font-semibold text-cv-text mb-4">LLM 服务 (OpenRouter)</h3>
+          <label class="block mb-3">
+            <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
+            <div class="relative mt-1.5">
+              <input v-model="form.llm.api_key" :type="showTokens['llm_key'] ? 'text' : 'password'"
+                     class="w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 pr-10 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
+              <button @click="toggleShow('llm_key')" class="absolute right-3 top-1/2 -translate-y-1/2 text-cv-text-muted hover:text-cv-text cursor-pointer text-xs">
+                {{ showTokens['llm_key'] ? '隐藏' : '显示' }}
+              </button>
+            </div>
+          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <label class="block">
+              <span class="text-[13px] text-cv-text-secondary">默认模型</span>
+              <CvSelect v-model="form.llm.model" :options="OPENROUTER_MODELS" class="mt-1.5" />
+            </label>
+            <label class="block">
+              <span class="text-[13px] text-cv-text-secondary">Temperature</span>
+              <input v-model.number="form.llm.temperature" type="number" step="0.1" min="0" max="2"
+                     class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
+            </label>
+          </div>
+        </section>
+
+        <!-- Vision LLM -->
+        <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
+          <h3 class="text-sm font-semibold text-cv-text mb-4">视觉 LLM (Vision 模型用于图像理解)</h3>
+          <label class="block mb-3">
+            <span class="text-[13px] text-cv-text-secondary">Vision API Key <span class="text-cv-danger">*</span></span>
+            <div class="relative mt-1.5">
+              <input v-model="form.llm.vision_api_key" :type="showTokens['vision_key'] ? 'text' : 'password'"
+                     class="w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 pr-10 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
+              <button @click="toggleShow('vision_key')" class="absolute right-3 top-1/2 -translate-y-1/2 text-cv-text-muted hover:text-cv-text cursor-pointer text-xs">
+                {{ showTokens['vision_key'] ? '隐藏' : '显示' }}
+              </button>
+            </div>
+          </label>
+          <label class="block">
+            <span class="text-[13px] text-cv-text-secondary">Vision 模型</span>
+            <CvSelect v-model="form.llm.vision_model" :options="VISION_MODELS" class="mt-1.5" />
+          </label>
+        </section>
+
+        <!-- Cartesia TTS -->
+        <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
+          <h3 class="text-sm font-semibold text-cv-text mb-4">语音合成 (Cartesia TTS)</h3>
           <label class="block mb-3">
             <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
             <div class="relative mt-1.5">
@@ -96,19 +144,19 @@ async function test() {
 
         <!-- LiveKit -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">LiveKit (WebRTC)</h3>
+          <h3 class="text-sm font-semibold text-cv-text mb-4">LiveKit (WebRTC，可选)</h3>
           <label class="block mb-3">
-            <span class="text-[13px] text-cv-text-secondary">URL <span class="text-cv-danger">*</span></span>
+            <span class="text-[13px] text-cv-text-secondary">URL</span>
             <input v-model="form.livekit.url" placeholder="wss://your-livekit-server.com"
                    class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text placeholder:text-cv-text-muted focus:border-cv-accent focus:outline-none transition-all" />
           </label>
           <div class="grid grid-cols-2 gap-4">
             <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
+              <span class="text-[13px] text-cv-text-secondary">API Key</span>
               <input v-model="form.livekit.api_key" class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
             </label>
             <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">API Secret <span class="text-cv-danger">*</span></span>
+              <span class="text-[13px] text-cv-text-secondary">API Secret</span>
               <div class="relative mt-1.5">
                 <input v-model="form.livekit.api_secret" :type="showTokens['lk_secret'] ? 'text' : 'password'"
                        class="w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 pr-10 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
@@ -120,87 +168,21 @@ async function test() {
           </div>
         </section>
 
-        <!-- LLM -->
-        <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">LLM 服务 (OpenRouter)</h3>
-          <label class="block mb-3">
-            <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
-            <div class="relative mt-1.5">
-              <input v-model="form.llm.api_key" :type="showTokens['llm_key'] ? 'text' : 'password'"
-                     class="w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 pr-10 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
-              <button @click="toggleShow('llm_key')" class="absolute right-3 top-1/2 -translate-y-1/2 text-cv-text-muted hover:text-cv-text cursor-pointer text-xs">
-                {{ showTokens['llm_key'] ? '隐藏' : '显示' }}
-              </button>
-            </div>
-          </label>
-          <div class="grid grid-cols-2 gap-4">
-            <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">默认模型</span>
-              <CvSelect
-                v-model="form.llm.model"
-                :options="['google/gemini-2.0-flash-001', 'google/gemini-2.5-flash', 'deepseek/deepseek-chat-v3', 'anthropic/claude-sonnet-4.6']"
-                class="mt-1.5"
-              />
-            </label>
-            <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">Temperature</span>
-              <input v-model.number="form.llm.temperature" type="number" step="0.1" min="0" max="2"
-                     class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
-            </label>
-          </div>
-        </section>
-
-        <!-- TTS -->
-        <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-1">TTS 服务 (Cartesia)</h3>
-          <p class="text-[13px] text-cv-text-muted mb-4">使用 Cartesia 进行语音合成</p>
-          <div class="grid grid-cols-2 gap-4">
-            <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">模型</span>
-              <CvSelect
-                v-model="form.tts.model"
-                :options="['sonic-3', 'sonic-2']"
-                class="mt-1.5"
-              />
-            </label>
-            <label class="block">
-              <span class="text-[13px] text-cv-text-secondary">默认音色</span>
-              <CvSelect
-                v-model="form.tts.voice"
-                :options="['your-cloned-voice-id']"
-                class="mt-1.5"
-              />
-            </label>
-          </div>
-        </section>
-
         <!-- ASR -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">ASR 服务 (Whisper)</h3>
+          <h3 class="text-sm font-semibold text-cv-text mb-4">语音识别 (Whisper ASR)</h3>
           <div class="grid grid-cols-3 gap-4">
             <label class="block">
               <span class="text-[13px] text-cv-text-secondary">模型大小</span>
-              <CvSelect
-                v-model="form.asr.model_size"
-                :options="['tiny', 'base', 'small', 'medium', 'large-v3']"
-                class="mt-1.5"
-              />
+              <CvSelect v-model="form.asr.model_size" :options="['tiny', 'base', 'small', 'medium', 'large-v3']" class="mt-1.5" />
             </label>
             <label class="block">
               <span class="text-[13px] text-cv-text-secondary">语言</span>
-              <CvSelect
-                v-model="form.asr.language"
-                :options="['auto', 'zh', 'en', 'ja']"
-                class="mt-1.5"
-              />
+              <CvSelect v-model="form.asr.language" :options="['auto', 'zh', 'en', 'ja']" class="mt-1.5" />
             </label>
             <label class="block">
               <span class="text-[13px] text-cv-text-secondary">设备</span>
-              <CvSelect
-                v-model="form.asr.device"
-                :options="['cpu', 'cuda']"
-                class="mt-1.5"
-              />
+              <CvSelect v-model="form.asr.device" :options="['cpu', 'cuda']" class="mt-1.5" />
             </label>
           </div>
         </section>

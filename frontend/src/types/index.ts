@@ -48,6 +48,8 @@ export interface LLMSettings {
   api_key: string
   model: string
   temperature: number
+  vision_api_key?: string
+  vision_model?: string
 }
 
 export interface TTSSettings {
@@ -73,6 +75,30 @@ export interface Settings {
   asr: ASRSettings
   inference: InferenceSettings
 }
+
+export const DEFAULT_OPENROUTER_API_KEY = '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'
+export const DEFAULT_VISION_MODEL = 'z-ai/glm-4.6v'
+
+export const OPENROUTER_MODELS = [
+  'google/gemma-4-26b-a4b-it',
+  'google/gemini-2.0-flash-001',
+  'google/gemini-2.5-flash',
+  'deepseek/deepseek-chat-v3',
+  'anthropic/claude-sonnet-4.6',
+  'z-ai/glm-4.6v',
+  'openai/gpt-4o',
+  'openai/gpt-4o-mini',
+  'meta-llama/llama-4-scout',
+  'mistralai/mistral-large',
+]
+
+export const VISION_MODELS = [
+  'z-ai/glm-4.6v',
+  'qwen/qwen2.5vl-72b-instruct',
+  'google/gemini-2.0-flash-exp',
+  'openai/gpt-4o',
+  'openai/gpt-4o-mini',
+]
 
 // Launch config
 export interface ConfigParam {
