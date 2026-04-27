@@ -61,29 +61,18 @@ func SaveDotenv(path string, updates map[string]string) error {
 	defer envMu.Unlock()
 	log.Printf("FORCE LOG: Acquired mutex lock")
 
-	keys := make([]string, 0, len(updates))
-	values := make([]string, 0, len(updates))
-	for k, v := range updates {
-		keys = append(keys, k)
-		values = append(values, v)
-	}
-
-	keysJSON, _ := json.Marshal(keys)
-	valuesJSON, _ := json.Marshal(values)
+	updatesJSON, _ := json.Marshal(updates)
 
 	scriptCode := fmt.Sprintf(`
 import os
 import json
 
-keys = json.loads(%v)
-values = json.loads(%v)
+updates = json.loads(%q)
 
 lines = []
 if os.path.exists(%q):
     with open(%q) as f:
         lines = f.read().split('\\n')
-
-updates = dict(zip(keys, values))
 
 new_lines = []
 for line in lines:
@@ -96,7 +85,7 @@ for key, val in updates.items():
 
 with open(%q, 'w') as f:
     f.write('\\n'.join(new_lines) + '\\n')
-`, string(keysJSON), string(valuesJSON), path, path, path)
+`, updatesJSON, path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
 	output, err := cmd.CombinedOutput()
