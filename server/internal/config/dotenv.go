@@ -3,9 +3,9 @@ package config
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 )
@@ -60,52 +60,53 @@ func SaveDotenv(path string, updates map[string]string) error {
 	defer envMu.Unlock()
 	log.Printf("FORCE LOG: Acquired mutex lock")
 
-	scriptPath := path + ".py"
-	scriptContent := fmt.Sprintf(`
-import os
-import sys
-
-updates = {}
-for arg in sys.argv[1:]:
-    if '=' in arg:
-        k, v = arg.split('=', 1)
-        updates[k] = v
-
-lines = []
-if os.path.exists(%q):
-    with open(%q, 'rb') as f:
-        lines = f.read().decode('utf-8').split('\n')
-
-new_lines = []
-for line in lines:
-    key = line.split('=')[0].strip() if '=' in line else ''
-    if key and key not in updates:
-        new_lines.append(line)
-
-for key, val in updates.items():
-    new_lines.append(f"{key}={val}")
-
-with open(%q, 'wb') as f:
-    f.write('\n'.join(new_lines).encode('utf-8'))
-`, path, path, path)
-
-	if err := os.WriteFile(scriptPath, []byte(scriptContent), 0755); err != nil {
-		return fmt.Errorf("write script: %w", err)
-	}
-	defer os.Remove(scriptPath)
-
-	args := []string{"python3", scriptPath}
-	for k, v := range updates {
-		args = append(args, fmt.Sprintf("%s=%s", k, v))
-	}
-
-	cmd := exec.Command(args[0], args[1:]...)
-	output, err := cmd.CombinedOutput()
-
+	f, err := os.OpenFile(path, os.O_RDWR, 0644)
 	if err != nil {
-		return fmt.Errorf("python error: %v, output: %s", err, output)
+		if os.IsNotExist(err) {
+			f, err = os.Create(path)
+		}
+		if err != nil {
+			return fmt.Errorf("open file: %w", err)
+		}
+	}
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+	lines := []string{}
+	for {
+		line, err := reader.ReadString('\n')
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("read file: %w", err)
+		}
+		line = strings.TrimRight(line, "\r\n")
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) == 2 && parts[0] != "" {
+			if _, exists := updates[parts[0]]; !exists {
+				lines = append(lines, line)
+			}
+		} else if line != "" {
+			lines = append(lines, line)
+		}
 	}
 
-	log.Printf("[SaveDotenv] Successfully saved via Python: %v", updates)
+	for k, v := range updates {
+		lines = append(lines, k+"="+v)
+	}
+
+	content := strings.Join(lines, "\n") + "\n"
+	if err := f.Truncate(0); err != nil {
+		return fmt.Errorf("truncate: %w", err)
+	}
+	if _, err := f.Seek(0, 0); err != nil {
+		return fmt.Errorf("seek: %w", err)
+	}
+	if _, err := f.WriteString(content); err != nil {
+		return fmt.Errorf("write: %w", err)
+	}
+
+	log.Printf("[SaveDotenv] Successfully saved: %v", updates)
 	return nil
 }
