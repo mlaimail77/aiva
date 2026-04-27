@@ -20,12 +20,13 @@ sudo systemctl restart nginx || true
 
 # Start Python inference server
 echo "[STARTUP] Starting Python inference server on port 50051..."
-nohup python3 -m inference.server > /tmp/inference.log 2>&1 &
+nohup sudo -u tomoyoukilai_gmail_com python3 -m inference.server > /tmp/inference.log 2>&1 &
 INFERENCE_PID=$!
 echo "[STARTUP] Inference server started with PID: $INFERENCE_PID"
 
 # Wait for inference server to be ready
-sleep 10
+echo "[STARTUP] Waiting for inference server to initialize..."
+sleep 30
 
 # Start Go API server
 echo "[STARTUP] Starting Go API server on port 8080..."
