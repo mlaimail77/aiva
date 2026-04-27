@@ -10,8 +10,18 @@ echo "[STARTUP] Starting AIVA services..."
 # Change to aiva directory
 cd /home/tomoyoukilai_gmail_com/aiva
 
-# Set PYTHONPATH to include flash_head src and user's site-packages
-export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages:$PYTHONPATH
+# Set PYTHONPATH to include flash_head and user's site-packages
+export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head:/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages
+
+# Create symlinks for flash_head submodules if they don't exist
+if [ ! -L /home/tomoyoukilai_gmail_com/aiva/models/flash_head/flash_head/ltx_video ]; then
+    echo "[STARTUP] Creating symlinks for flash_head submodules..."
+    cd /home/tomoyoukilai_gmail_com/aiva/models/flash_head/flash_head
+    ln -sf ../ltx_video ltx_video
+    ln -sf ../audio_analysis audio_analysis
+    ln -sf ../wan wan
+    cd /home/tomoyoukilai_gmail_com/aiva
+fi
 
 # Ensure nginx is running
 echo "[STARTUP] Ensuring nginx is running..."
@@ -21,7 +31,10 @@ sudo systemctl restart nginx || true
 # Start Python inference server
 echo "[STARTUP] Starting Python inference server on port 50051..."
 export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages
-cd /home/tomoyoukilai_gmail_com/aiva && sudo -u tomoyoukilai_gmail_com -E bash -c 'cd /home/tomoyoukilai_gmail_com/aiva && python3 -m inference.server' > /tmp/inference.log 2>&1 &
+cd /home/tomoyoukilai_gmail_com/aiva
+sudo -u tomoyoukilai_gmail_com -E bash -c 'cd /home/tomoyoukilai_gmail_com/aiva && exec python3 -m inference.server' > /home/tomoyoukilai_gmail_com/inference.log 2>&1 &
+INFERENCE_PID=$!
+echo "[STARTUP] Inference server started with PID: $INFERENCE_PID"
 INFERENCE_PID=$!
 echo "[STARTUP] Inference server started with PID: $INFERENCE_PID"
 
