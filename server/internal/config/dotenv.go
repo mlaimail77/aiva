@@ -75,8 +75,8 @@ func SaveDotenv(path string, updates map[string]string) error {
 import os
 import json
 
-keys = json.loads(%s)
-values = json.loads(%s)
+keys = json.loads(%v)
+values = json.loads(%v)
 
 lines = []
 if os.path.exists(%q):
