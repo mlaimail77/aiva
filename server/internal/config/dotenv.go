@@ -2,7 +2,6 @@ package config
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -61,18 +60,21 @@ func SaveDotenv(path string, updates map[string]string) error {
 	defer envMu.Unlock()
 	log.Printf("FORCE LOG: Acquired mutex lock")
 
-	updatesJSON, _ := json.Marshal(updates)
-
-	scriptCode := fmt.Sprintf(`
+	scriptPath := path + ".py"
+	scriptContent := fmt.Sprintf(`
 import os
-import json
+import sys
 
-updates = json.loads(%q)
+updates = {}
+for arg in sys.argv[1:]:
+    if '=' in arg:
+        k, v = arg.split('=', 1)
+        updates[k] = v
 
 lines = []
 if os.path.exists(%q):
     with open(%q) as f:
-        lines = f.read().split('\\n')
+        lines = f.read().split('\n')
 
 new_lines = []
 for line in lines:
@@ -84,10 +86,20 @@ for key, val in updates.items():
     new_lines.append(f"{key}={val}")
 
 with open(%q, 'w') as f:
-    f.write('\\n'.join(new_lines) + '\\n')
-`, updatesJSON, path, path, path)
+    f.write('\n'.join(new_lines) + '\n')
+`, path, path, path)
 
-	cmd := exec.Command("python3", "-c", scriptCode)
+	if err := os.WriteFile(scriptPath, []byte(scriptContent), 0755); err != nil {
+		return fmt.Errorf("write script: %w", err)
+	}
+	defer os.Remove(scriptPath)
+
+	args := []string{"python3", scriptPath}
+	for k, v := range updates {
+		args = append(args, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	cmd := exec.Command(args[0], args[1:]...)
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
