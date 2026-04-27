@@ -28,7 +28,7 @@ inference:
             dist_worker_main_thread: true
             infer_params:
                 frame_num: 26
-                motion_frames_latent_num: 2
+                motion_frames_num: 2
                 tgt_fps: 20
                 sample_rate: 16000
                 sample_shift: 5
