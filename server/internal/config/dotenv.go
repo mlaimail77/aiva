@@ -73,8 +73,8 @@ for arg in sys.argv[1:]:
 
 lines = []
 if os.path.exists(%q):
-    with open(%q) as f:
-        lines = f.read().split('\n')
+    with open(%q, 'rb') as f:
+        lines = f.read().decode('utf-8').split('\n')
 
 new_lines = []
 for line in lines:
@@ -85,8 +85,8 @@ for line in lines:
 for key, val in updates.items():
     new_lines.append(f"{key}={val}")
 
-with open(%q, 'w') as f:
-    f.write('\n'.join(new_lines) + '\n')
+with open(%q, 'wb') as f:
+    f.write('\n'.join(new_lines).encode('utf-8'))
 `, path, path, path)
 
 	if err := os.WriteFile(scriptPath, []byte(scriptContent), 0755); err != nil {
