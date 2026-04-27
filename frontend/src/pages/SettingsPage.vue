@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import CvSelect from '../components/CvSelect.vue'
 import { useSettingsStore } from '../stores/settings'
 import type { Settings } from '../types'
-import { DEFAULT_OPENROUTER_API_KEY, DEFAULT_VISION_MODEL, OPENROUTER_MODELS, VISION_MODELS } from '../types'
+import { VISION_MODELS, OPENROUTER_MODELS, DEFAULT_VISION_MODEL } from '../types'
 
 const router = useRouter()
 const store = useSettingsStore()
@@ -16,10 +16,15 @@ const testResult = ref<string | null>(null)
 const form = ref<Settings>({
   cartesia: { api_key: '', voice_id: '', ws_url: 'wss://api.cartesia.ai/tts/websocket' },
   livekit: { url: '', api_key: '', api_secret: '' },
-  llm: { api_key: DEFAULT_OPENROUTER_API_KEY, model: 'google/gemini-2.0-flash-001', temperature: 0.7, vision_api_key: DEFAULT_OPENROUTER_API_KEY, vision_model: DEFAULT_VISION_MODEL },
+  llm: { api_key: '', model: 'google/gemini-2.0-flash-001', temperature: 0.7, vision_api_key: '', vision_model: DEFAULT_VISION_MODEL },
   tts: { model: 'sonic-3', voice: 'cartesia' },
   asr: { model_size: 'base', language: 'auto', device: 'cpu' },
   inference: { grpc_addr: 'localhost:50051' },
+})
+
+const visionModel = computed({
+  get: () => form.value.llm.vision_model || DEFAULT_VISION_MODEL,
+  set: (v: string) => { form.value.llm.vision_model = v }
 })
 
 const showTokens = ref<Record<string, boolean>>({})
@@ -32,9 +37,14 @@ onMounted(async () => {
   await store.fetch().catch(() => {})
   if (store.settings) {
     const s = JSON.parse(JSON.stringify(store.settings))
-    if (!s.llm.vision_api_key) s.llm.vision_api_key = DEFAULT_OPENROUTER_API_KEY
+    if (!s.llm.vision_api_key) s.llm.vision_api_key = ''
     if (!s.llm.vision_model) s.llm.vision_model = DEFAULT_VISION_MODEL
+    else if (typeof s.llm.vision_model !== 'string') s.llm.vision_model = DEFAULT_VISION_MODEL
+    if (!s.tts) s.tts = { model: 'sonic-3', voice: 'cartesia' }
+    if (!s.asr) s.asr = { model_size: 'base', language: 'auto', device: 'cpu' }
+    if (!s.inference) s.inference = { grpc_addr: 'localhost:50051' }
     form.value = s
+    visionModel.value = form.value.llm.vision_model || DEFAULT_VISION_MODEL
   }
 })
 
@@ -114,7 +124,7 @@ async function test() {
           </label>
           <label class="block">
             <span class="text-[13px] text-cv-text-secondary">Vision 模型</span>
-            <CvSelect v-model="form.llm.vision_model" :options="VISION_MODELS" class="mt-1.5" />
+            <CvSelect v-model="visionModel" :options="VISION_MODELS" class="mt-1.5" />
           </label>
         </section>
 

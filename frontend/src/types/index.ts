@@ -92,7 +92,7 @@ export const OPENROUTER_MODELS = [
   'mistralai/mistral-large',
 ]
 
-export const VISION_MODELS = [
+export const VISION_MODELS: string[] = [
   'z-ai/glm-4.6v',
   'qwen/qwen2.5vl-72b-instruct',
   'google/gemini-2.0-flash-exp',
