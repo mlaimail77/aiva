@@ -1,7 +1,7 @@
 syntax = "proto3";
-package cyberverse;
+package aiva;
 
-option go_package = "github.com/cyberverse/server/internal/pb";
+option go_package = "github.com/mlaimail77/aiva/server/internal/pb";
 
 import "common.proto";
 
@@ -23,7 +23,7 @@ message VoiceLLMOutput {
   string transcript = 2;
   string user_transcript = 3;
   bool is_final = 4;
-  reserved 5; // removed: video comes from AvatarService.GenerateStream only
+  reserved 5;
 }
 
 message VoiceLLMConfig {
