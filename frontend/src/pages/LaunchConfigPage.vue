@@ -166,7 +166,7 @@ async function launch() {
                 class="h-[34px] px-3 bg-[#0f1218] border border-[rgba(72,80,92,0.4)] text-[#969eaa] text-[13px] hover:border-cyber-cyan/40 transition-colors cursor-pointer">
           ← 返回
         </button>
-        <span class="text-sm font-bold tracking-[1.68px] uppercase text-[#f6efe8]">CyberVerse</span>
+        <span class="text-sm font-bold tracking-[1.68px] uppercase text-[#f6efe8]">AIVA</span>
       </div>
       <span class="text-[13px] text-[#505864]">角色列表 / 部署配置</span>
       <div class="flex items-center gap-2">

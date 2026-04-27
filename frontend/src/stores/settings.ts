@@ -10,7 +10,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const isConfigured = computed(() => {
     if (!settings.value) return false
     const s = settings.value
-    return !!(s.doubao.access_token || s.cartesia.api_key) && !!s.livekit.url
+    return !!(s.cartesia.api_key && s.cartesia.voice_id) && !!s.llm.api_key
   })
 
   async function fetch() {

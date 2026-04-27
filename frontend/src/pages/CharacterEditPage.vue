@@ -22,8 +22,8 @@ const form = ref<CharacterForm>({
   avatar_image: '',
   use_face_crop: false,
   image_mode: 'fixed',
-  voice_provider: 'doubao',
-  voice_type: '温柔文雅',
+  voice_provider: 'cartesia',
+  voice_type: '',
   speaking_style: '',
   personality: '',
   welcome_message: '',
@@ -238,21 +238,13 @@ const breadcrumb = computed(() =>
               <span class="text-[11px] font-medium text-cv-text-muted uppercase tracking-wide">语音 / 供应商</span>
               <CvSelect
                 v-model="form.voice_provider"
-                :options="[{ label: '豆包语音 (Doubao)', value: 'doubao' }, { label: 'Cartesia', value: 'cartesia' }]"
+                :options="[{ label: 'Cartesia', value: 'cartesia' }]"
                 class="mt-1.5"
               />
             </label>
             <label class="block">
-              <span class="text-[11px] font-medium text-cv-text-muted uppercase tracking-wide">语音 / 声线</span>
-              <template v-if="form.voice_provider === 'doubao'">
-                <CvSelect
-                  v-model="form.voice_type"
-                  :options="VOICE_OPTIONS"
-                  class="mt-1.5"
-                />
-              </template>
-              <template v-else>
-                <input v-model="form.voice_type" placeholder="输入 Cartesia Voice ID"
+              <span class="text-[11px] font-medium text-cv-text-muted uppercase tracking-wide">语音 / 声线 (Cartesia Voice ID)</span>
+              <input v-model="form.voice_type" placeholder="输入 Cartesia Voice ID"
                        class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text placeholder:text-cv-text-muted focus:border-cv-accent focus:outline-none transition-all" />
               </template>
             </label>

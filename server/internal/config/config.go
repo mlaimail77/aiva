@@ -54,8 +54,8 @@ type PipelineConfig struct {
 	ICENetworkTypes []string    `yaml:"ice_network_types,omitempty"`   // Deprecated: use TURN instead
 	TURNEnabled     bool        `yaml:"turn_enabled,omitempty"`        // Enable embedded TURN-over-TCP server
 	TURNPort        int         `yaml:"turn_port,omitempty"`           // TCP port for TURN (default 3478)
-	TURNRealm       string      `yaml:"turn_realm,omitempty"`          // TURN realm (default "cyberverse")
-	TURNUsername    string      `yaml:"turn_username,omitempty"`       // TURN username (default "cyberverse")
+	TURNRealm       string      `yaml:"turn_realm,omitempty"`          // TURN realm (default "aiva")
+	TURNUsername    string      `yaml:"turn_username,omitempty"`       // TURN username (default "aiva")
 	TURNPassword    string      `yaml:"turn_password,omitempty"`       // TURN password (required when enabled)
 }
 
@@ -108,10 +108,10 @@ func Load(path string) (*Config, error) {
 		cfg.Pipeline.TURNPort = 3478
 	}
 	if cfg.Pipeline.TURNRealm == "" {
-		cfg.Pipeline.TURNRealm = "cyberverse"
+		cfg.Pipeline.TURNRealm = "aiva"
 	}
 	if cfg.Pipeline.TURNUsername == "" {
-		cfg.Pipeline.TURNUsername = "cyberverse"
+		cfg.Pipeline.TURNUsername = "aiva"
 	}
 	if cfg.Recording.OutputDir == "" {
 		cfg.Recording.OutputDir = "./recordings"

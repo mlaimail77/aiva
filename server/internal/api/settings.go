@@ -11,26 +11,19 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cyberverse/server/internal/config"
+	"github.com/mlaimail77/aiva/internal/config"
 )
 
 var errInferenceUnavailable = errors.New("inference service is unavailable")
 
 // SettingsResponse is the JSON shape exchanged with the frontend Settings page.
 type SettingsResponse struct {
-	Doubao    DoubaoSettings    `json:"doubao"`
-	Cartesia CartesiaSettings  `json:"cartesia"`
-	LiveKit   LiveKitSettings  `json:"livekit"`
-	LLM       LLMSettings     `json:"llm"`
-	TTS       TTSSettings     `json:"tts"`
-	ASR       ASRSettings     `json:"asr"`
-	Inference InferenceSettings `json:"inference"`
-}
-
-type DoubaoSettings struct {
-	AccessToken string `json:"access_token"`
-	AppID       string `json:"app_id"`
-	WsURL       string `json:"ws_url"`
+	Cartesia   CartesiaSettings    `json:"cartesia"`
+	LiveKit    LiveKitSettings    `json:"livekit"`
+	LLM        LLMSettings       `json:"llm"`
+	TTS        TTSSettings       `json:"tts"`
+	ASR        ASRSettings       `json:"asr"`
+	Inference  InferenceSettings `json:"inference"`
 }
 
 type CartesiaSettings struct {
@@ -115,9 +108,6 @@ type settingsField struct {
 }
 
 var settingsFields = []settingsField{
-	{"DOUBAO_ACCESS_TOKEN", func(s *SettingsResponse) string { return s.Doubao.AccessToken }},
-	{"DOUBAO_APP_ID", func(s *SettingsResponse) string { return s.Doubao.AppID }},
-	{"DOUBAO_WS_URL", func(s *SettingsResponse) string { return s.Doubao.WsURL }},
 	{"CARTESIA_API_KEY", func(s *SettingsResponse) string { return s.Cartesia.APIKey }},
 	{"CARTESIA_VOICE_ID", func(s *SettingsResponse) string { return s.Cartesia.VoiceID }},
 	{"CARTESIA_WS_URL", func(s *SettingsResponse) string { return s.Cartesia.WsURL }},
@@ -139,11 +129,6 @@ var settingsFields = []settingsField{
 
 func (r *Router) handleGetSettings(w http.ResponseWriter, req *http.Request) {
 	resp := SettingsResponse{
-		Doubao: DoubaoSettings{
-			AccessToken: os.Getenv("DOUBAO_ACCESS_TOKEN"),
-			AppID:       os.Getenv("DOUBAO_APP_ID"),
-			WsURL:       envOrDefault("DOUBAO_WS_URL", "wss://openspeech.bytedance.com/api/v3/realtime/dialogue"),
-		},
 		Cartesia: CartesiaSettings{
 			APIKey:  os.Getenv("CARTESIA_API_KEY"),
 			VoiceID: os.Getenv("CARTESIA_VOICE_ID"),
@@ -156,7 +141,7 @@ func (r *Router) handleGetSettings(w http.ResponseWriter, req *http.Request) {
 		},
 		LLM: LLMSettings{
 			APIKey:      os.Getenv("OPENAI_API_KEY"),
-			Model:       envOrDefault("LLM_MODEL", "gpt-4o"),
+			Model:       envOrDefault("OPENAI_MODEL", "google/gemini-2.0-flash-001"),
 			Temperature: envOrDefaultFloat("LLM_TEMPERATURE", 0.7),
 		},
 		TTS: TTSSettings{

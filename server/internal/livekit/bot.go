@@ -62,7 +62,7 @@ func NewBot(url, apiKey, apiSecret, roomName string) *Bot {
 		apiKey:          apiKey,
 		apiSecret:       apiSecret,
 		roomName:        roomName,
-		identity:        "cyberverse-bot",
+		identity:        "aiva-bot",
 		userAudioC:      make(chan []byte, 64),
 		pcmRemoteTracks: make(map[*webrtc.TrackRemote]*lkmedia.PCMRemoteTrack),
 	}

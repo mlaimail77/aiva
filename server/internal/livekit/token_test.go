@@ -33,7 +33,7 @@ func TestGenerateTokenDifferentIdentities(t *testing.T) {
 
 func TestRoomName(t *testing.T) {
 	name := RoomName("abc-123")
-	if name != "cyberverse-abc-123" {
+	if name != "aiva-abc-123" {
 		t.Errorf("expected cyberverse-abc-123, got %s", name)
 	}
 }

@@ -13,11 +13,10 @@ const testing = ref(false)
 const testResult = ref<string | null>(null)
 
 const form = ref<Settings>({
-  doubao: { access_token: '', app_id: '', ws_url: 'wss://openspeech.bytedance.com/api/v3/realtime/dialogue' },
   cartesia: { api_key: '', voice_id: '', ws_url: 'wss://api.cartesia.ai/tts/websocket' },
   livekit: { url: '', api_key: '', api_secret: '' },
-  llm: { api_key: '', model: 'gpt-4o', temperature: 0.7 },
-  tts: { model: 'tts-1', voice: 'nova' },
+  llm: { api_key: '', model: 'google/gemini-2.0-flash-001', temperature: 0.7 },
+  tts: { model: 'sonic-3', voice: 'cartesia' },
   asr: { model_size: 'base', language: 'auto', device: 'cpu' },
   inference: { grpc_addr: 'localhost:50051' },
 })
@@ -71,32 +70,9 @@ async function test() {
       <p class="text-[13px] text-cv-text-muted mb-8">配置服务凭证和默认模型参数，所有角色共享</p>
 
       <div class="flex flex-col gap-6">
-        <!-- Doubao -->
-        <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">语音对话服务 (Doubao)</h3>
-          <label class="block mb-3">
-            <span class="text-[13px] text-cv-text-secondary">Access Token <span class="text-cv-danger">*</span></span>
-            <div class="relative mt-1.5">
-              <input v-model="form.doubao.access_token" :type="showTokens['doubao_token'] ? 'text' : 'password'"
-                     class="w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 pr-10 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
-              <button @click="toggleShow('doubao_token')" class="absolute right-3 top-1/2 -translate-y-1/2 text-cv-text-muted hover:text-cv-text cursor-pointer text-xs">
-                {{ showTokens['doubao_token'] ? '隐藏' : '显示' }}
-              </button>
-            </div>
-          </label>
-          <label class="block mb-3">
-            <span class="text-[13px] text-cv-text-secondary">App ID <span class="text-cv-danger">*</span></span>
-            <input v-model="form.doubao.app_id" class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
-          </label>
-          <label class="block">
-            <span class="text-[13px] text-cv-text-secondary">WebSocket URL</span>
-            <input v-model="form.doubao.ws_url" class="mt-1.5 w-full h-[42px] bg-cv-elevated border border-cv-border rounded-cv-md px-4 text-sm text-cv-text focus:border-cv-accent focus:outline-none transition-all" />
-          </label>
-        </section>
-
         <!-- Cartesia -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">语音对话服务 (Cartesia)</h3>
+          <h3 class="text-sm font-semibold text-cv-text mb-4">语音合成服务 (Cartesia)</h3>
           <label class="block mb-3">
             <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
             <div class="relative mt-1.5">
@@ -146,7 +122,7 @@ async function test() {
 
         <!-- LLM -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-4">LLM 服务 (OpenAI)</h3>
+          <h3 class="text-sm font-semibold text-cv-text mb-4">LLM 服务 (OpenRouter)</h3>
           <label class="block mb-3">
             <span class="text-[13px] text-cv-text-secondary">API Key <span class="text-cv-danger">*</span></span>
             <div class="relative mt-1.5">
@@ -162,7 +138,7 @@ async function test() {
               <span class="text-[13px] text-cv-text-secondary">默认模型</span>
               <CvSelect
                 v-model="form.llm.model"
-                :options="['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo']"
+                :options="['google/gemini-2.0-flash-001', 'google/gemini-2.5-flash', 'deepseek/deepseek-chat-v3', 'anthropic/claude-sonnet-4.6']"
                 class="mt-1.5"
               />
             </label>
@@ -176,14 +152,14 @@ async function test() {
 
         <!-- TTS -->
         <section class="bg-cv-surface border border-cv-border rounded-cv-lg p-6">
-          <h3 class="text-sm font-semibold text-cv-text mb-1">TTS 服务 (OpenAI)</h3>
-          <p class="text-[13px] text-cv-text-muted mb-4">共用 LLM 的 OpenAI API Key</p>
+          <h3 class="text-sm font-semibold text-cv-text mb-1">TTS 服务 (Cartesia)</h3>
+          <p class="text-[13px] text-cv-text-muted mb-4">使用 Cartesia 进行语音合成</p>
           <div class="grid grid-cols-2 gap-4">
             <label class="block">
               <span class="text-[13px] text-cv-text-secondary">模型</span>
               <CvSelect
                 v-model="form.tts.model"
-                :options="['tts-1', 'tts-1-hd']"
+                :options="['sonic-3', 'sonic-2']"
                 class="mt-1.5"
               />
             </label>
@@ -191,7 +167,7 @@ async function test() {
               <span class="text-[13px] text-cv-text-secondary">默认音色</span>
               <CvSelect
                 v-model="form.tts.voice"
-                :options="['alloy', 'echo', 'fable', 'nova', 'onyx', 'shimmer']"
+                :options="['your-cloned-voice-id']"
                 class="mt-1.5"
               />
             </label>

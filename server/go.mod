@@ -1,4 +1,4 @@
-module github.com/cyberverse/server
+module github.com/mlaimail77/aiva
 
 go 1.25.0
 

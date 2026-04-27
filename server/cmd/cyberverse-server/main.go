@@ -12,15 +12,15 @@ import (
 
 	"path/filepath"
 
-	"github.com/cyberverse/server/internal/api"
-	"github.com/cyberverse/server/internal/character"
-	"github.com/cyberverse/server/internal/config"
-	"github.com/cyberverse/server/internal/direct"
-	"github.com/cyberverse/server/internal/inference"
-	"github.com/cyberverse/server/internal/livekit"
-	"github.com/cyberverse/server/internal/orchestrator"
-	"github.com/cyberverse/server/internal/recording"
-	"github.com/cyberverse/server/internal/ws"
+	"github.com/mlaimail77/aiva/internal/api"
+	"github.com/mlaimail77/aiva/internal/character"
+	"github.com/mlaimail77/aiva/internal/config"
+	"github.com/mlaimail77/aiva/internal/direct"
+	"github.com/mlaimail77/aiva/internal/inference"
+	"github.com/mlaimail77/aiva/internal/livekit"
+	"github.com/mlaimail77/aiva/internal/orchestrator"
+	"github.com/mlaimail77/aiva/internal/recording"
+	"github.com/mlaimail77/aiva/internal/ws"
 )
 
 func main() {

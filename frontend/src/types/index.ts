@@ -32,12 +32,6 @@ export interface Character {
 export type CharacterForm = Omit<Character, 'id' | 'created_at' | 'updated_at' | 'images' | 'active_image'>
 
 // Settings
-export interface DoubaoSettings {
-  access_token: string
-  app_id: string
-  ws_url: string
-}
-
 export interface CartesiaSettings {
   api_key: string
   voice_id: string
@@ -72,7 +66,6 @@ export interface InferenceSettings {
 }
 
 export interface Settings {
-  doubao: DoubaoSettings
   cartesia: CartesiaSettings
   livekit: LiveKitSettings
   llm: LLMSettings
@@ -136,29 +129,8 @@ export interface VoiceOption {
   value: string
 }
 
-// SC2.0 official voices — values match SC20_VOICES keys in doubao_config.py
+// Cartesia voice IDs - use your cloned voice ID from Cartesia dashboard
+// Or use preset voices from https://play.cartesia.ai/voices
 export const VOICE_OPTIONS: VoiceOption[] = [
-  // Female
-  { label: '傲娇女友', value: '傲娇女友' },
-  { label: '冰娇姐姐', value: '冰娇姐姐' },
-  { label: '成熟姐姐', value: '成熟姐姐' },
-  { label: '可爱女生', value: '可爱女生' },
-  { label: '暖心学姐', value: '暖心学姐' },
-  { label: '贴心女友', value: '贴心女友' },
-  { label: '温柔文雅', value: '温柔文雅' },
-  { label: '妩媚御姐', value: '妩媚御姐' },
-  { label: '性感御姐', value: '性感御姐' },
-  // Male
-  { label: '爱气凌人', value: '爱气凌人' },
-  { label: '傲娇公子', value: '傲娇公子' },
-  { label: '傲娇精英', value: '傲娇精英' },
-  { label: '傲慢少爷', value: '傲慢少爷' },
-  { label: '霸道少爷', value: '霸道少爷' },
-  { label: '冰娇白莲', value: '冰娇白莲' },
-  { label: '不羁青年', value: '不羁青年' },
-  { label: '成熟总裁', value: '成熟总裁' },
-  { label: '磁性男嗓', value: '磁性男嗓' },
-  { label: '醋精男友', value: '醋精男友' },
-  { label: '风发少年', value: '风发少年' },
-  { label: '腹黑公子', value: '腹黑公子' },
+  { label: '选择你自己的克隆声音', value: 'your-cloned-voice-id' },
 ]

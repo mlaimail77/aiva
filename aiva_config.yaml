@@ -7,12 +7,11 @@ livekit:
     url: "${LIVEKIT_URL}"
     api_key: "${LIVEKIT_API_KEY}"
     api_secret: "${LIVEKIT_API_SECRET}"
-# Warmup configuration for reducing first frame inference latency
 warmup:
     enabled: true
     distributed:
-        enabled: true # Enable warmup in multi-GPU mode
-        timeout_s: 30 # Timeout in seconds to prevent hangs
+        enabled: true
+        timeout_s: 30
 inference:
     avatar:
         default: "flash_head"
@@ -21,9 +20,9 @@ inference:
             world_size: 1
         flash_head:
             plugin_class: "inference.plugins.avatar.flash_head_plugin.FlashHeadAvatarPlugin"
-            models_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints"
-            checkpoint_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints/SoulX-FlashHead-1_3B"
-            wav2vec_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints/japanese-wav2vec2-base"
+            models_dir: "./checkpoints"
+            checkpoint_dir: "./checkpoints/SoulX-FlashHead-1_3B"
+            wav2vec_dir: "./checkpoints/japanese-wav2vec2-base"
             model_type: "lite"
             compile_model: false
             compile_vae: false
@@ -31,9 +30,9 @@ inference:
             seed: 9999
         live_act:
             plugin_class: "inference.plugins.avatar.live_act_plugin.LiveActAvatarPlugin"
-            models_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints/SoulX-LiveAct"
-            ckpt_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints/LiveAct"
-            wav2vec_dir: "/home/mlaimail76_gmail_com/aiva/checkpoints/japanese-wav2vec2-base"
+            models_dir: "./checkpoints/SoulX-LiveAct"
+            ckpt_dir: "./checkpoints/LiveAct"
+            wav2vec_dir: "./checkpoints/japanese-wav2vec2-base"
             size: "320*480"
             fps: 20
             seed: 42
@@ -46,49 +45,23 @@ inference:
             compile_wan_model: false
             compile_vae_decode: false
             default_prompt: "一个人在说话"
-
-    voice_llm:
-        default: "doubao"
-        openai:
-            plugin_class: "inference.plugins.llm.openai_plugin.OpenAILLMPlugin"
-            access_token: "${OPENAI_API_KEY}"
+    llm:
+        default: "openrouter"
+        openrouter:
+            plugin_class: "inference.plugins.llm.openai_plugin.OpenRouterLLMPlugin"
+            api_key: "${OPENAI_API_KEY}"
             base_url: "https://openrouter.ai/api/v1"
-            model: "google/gemini-2.5-flash"
-            voice: "shimmer"
+            model: "google/gemini-2.0-flash-001"
+            temperature: 0.7
             system_prompt: "你是一个友善的数字人助手。"
-            end_smooth_window_ms: 6000
-        doubao:
-            plugin_class: "inference.plugins.voice_llm.doubao_realtime.DoubaoRealtimePlugin"
-            access_token: "${DOUBAO_ACCESS_TOKEN}"
-            app_id: "${DOUBAO_APP_ID}"
-            ws_url: "${DOUBAO_WS_URL:-wss://openspeech.bytedance.com/api/v3/realtime/dialogue}"
+    tts:
+        default: "cartesia"
         cartesia:
             plugin_class: "inference.plugins.tts.cartesia_tts_plugin.CartesiaTTSPlugin"
             api_key: "${CARTESIA_API_KEY}"
             voice_id: "${CARTESIA_VOICE_ID}"
-    llm:
-        default: "openai"
-        openai:
-            plugin_class: "inference.plugins.llm.openai_plugin.OpenAILLMPlugin"
-            api_key: "${OPENAI_API_KEY}"
-            base_url: "${OPENAI_API_BASE:-https://api.openai.com/v1}"
-            model: "${OPENAI_MODEL:-gpt-4o}"
-            temperature: 0.7
-            system_prompt: "你是一个友善的数字人助手。"
-        openrouter:
-            plugin_class: "inference.plugins.llm.openai_plugin.OpenAILLMPlugin"
-            api_key: "${OPENAI_API_KEY}"
-            base_url: "https://openrouter.ai/api/v1"
-            model: "${OPENAI_MODEL:-google/gemini-2.0-flash-001}"
-            temperature: 0.7
-            system_prompt: "你是一个友善的数字人助手。"
-    tts:
-        default: "openai"
-        openai:
-            plugin_class: "inference.plugins.tts.openai_tts_plugin.OpenAITTSPlugin"
-            api_key: "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"
-            model: "tts-1"
-            voice: "nova"
+            ws_url: "wss://api.cartesia.ai/tts/websocket"
+            model_id: "sonic-3"
     asr:
         default: "whisper"
         whisper:
@@ -101,16 +74,16 @@ session:
     idle_timeout_s: 300
     max_duration_s: 3600
 pipeline:
-    default_mode: "voice_llm"
-    streaming_mode: "direct" # "direct" = P2P WebRTC (pion), "livekit" = LiveKit SFU
+    default_mode: "standard"
+    streaming_mode: "direct"
     turn_enabled: true
-    turn_port: 8443 # TCP port for embedded TURN server (SSH tunnel)
+    turn_port: 8443
     turn_realm: "aiva"
     turn_username: "aiva"
     turn_password: "${TURN_PASSWORD}"
     ice_public_ip: "${ICE_PUBLIC_IP}"
 recording:
-    enabled: true # 设为 true 开启录制
+    enabled: true
     output_dir: "./recordings"
     crf: 23
 inference_grpc:

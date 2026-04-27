@@ -99,7 +99,7 @@ func (p *DirectPeer) Connect(ctx context.Context) error {
 	videoTrack, err := webrtc.NewTrackLocalStaticSample(
 		webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeVP8},
 		"assistant-video",
-		"cyberverse",
+		"aiva",
 	)
 	if err != nil {
 		pc.Close()
@@ -115,7 +115,7 @@ func (p *DirectPeer) Connect(ctx context.Context) error {
 	audioTrack, err := webrtc.NewTrackLocalStaticSample(
 		webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeOpus},
 		"assistant-audio",
-		"cyberverse",
+		"aiva",
 	)
 	if err != nil {
 		pc.Close()
