@@ -10,6 +10,9 @@ echo "[STARTUP] Starting AIVA services..."
 # Change to aiva directory
 cd /home/tomoyoukilai_gmail_com/aiva
 
+# Set PYTHONPATH to include flash_head src
+export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:$PYTHONPATH
+
 # Ensure nginx is running
 echo "[STARTUP] Ensuring nginx is running..."
 sudo systemctl enable nginx || true
