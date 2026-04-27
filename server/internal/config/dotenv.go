@@ -2,11 +2,11 @@ package config
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 	"sync"
 )
 
@@ -60,17 +60,12 @@ func SaveDotenv(path string, updates map[string]string) error {
 	defer envMu.Unlock()
 	log.Printf("FORCE LOG: Acquired mutex lock")
 
-	keys := make([]string, 0, len(updates))
-	values := make([]string, 0, len(updates))
-	for k, v := range updates {
-		keys = append(keys, k)
-		values = append(values, v)
-	}
+	keysJSON, _ := json.Marshal(keys)
+	valuesJSON, _ := json.Marshal(values)
 
 	scriptCode := fmt.Sprintf(`
 import os
 import json
-import sys
 
 keys = json.loads(%q)
 values = json.loads(%q)
@@ -93,7 +88,7 @@ for key, val in updates.items():
 
 with open(%q, 'w') as f:
     f.write('\\n'.join(new_lines) + '\\n')
-`, keys, values, path, path, path)
+`, keysJSON, valuesJSON, path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
 	output, err := cmd.CombinedOutput()
