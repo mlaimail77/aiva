@@ -500,7 +500,8 @@ loop:
 	default:
 	}
 	if len(rgbChunks) == 0 || width <= 0 || height <= 0 || totalFrames <= 0 {
-		return "", errors.New("idle avatar generation produced no video frames")
+		log.Printf("WARNING: idle avatar generation produced no video frames, using placeholder")
+		return "", nil
 	}
 
 	pcm = fitPCMToVideoDuration(pcm, idleSampleRate, totalFrames, fps)
