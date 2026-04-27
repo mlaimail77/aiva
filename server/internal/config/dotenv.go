@@ -79,19 +79,18 @@ if os.path.exists(%q):
         lines = f.read().split('\\n')
 
 updates = dict(zip(keys, values))
-updated = {}
-for i, line in enumerate(lines):
+
+new_lines = []
+for line in lines:
     key = line.split('=')[0].strip() if '=' in line else ''
-    if key in updates:
-        lines[i] = f"{key}={updates[key]}"
-        updated[key] = True
+    if key and key not in updates:
+        new_lines.append(line)
 
 for key, val in updates.items():
-    if key not in updated:
-        lines.append(f"{key}={val}")
+    new_lines.append(f"{key}={val}")
 
 with open(%q, 'w') as f:
-    f.write('\\n'.join(lines) + '\\n')
+    f.write('\\n'.join(new_lines) + '\\n')
 `, strings.Join(keys, ","), strings.Join(values, ","), path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
