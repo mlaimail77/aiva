@@ -30,9 +30,9 @@ sudo systemctl restart nginx || true
 
 # Start Python inference server
 echo "[STARTUP] Starting Python inference server on port 50051..."
-export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages
+export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head:/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages
 cd /home/tomoyoukilai_gmail_com/aiva
-sudo -u tomoyoukilai_gmail_com -E bash -c 'cd /home/tomoyoukilai_gmail_com/aiva && exec python3 -m inference.server' > /home/tomoyoukilai_gmail_com/inference.log 2>&1 &
+nohup sudo -u tomoyoukilai_gmail_com -E bash -c 'cd /home/tomoyoukilai_gmail_com/aiva && exec python3 -m inference.server' > /home/tomoyoukilai_gmail_com/inference.log 2>&1 &
 INFERENCE_PID=$!
 echo "[STARTUP] Inference server started with PID: $INFERENCE_PID"
 INFERENCE_PID=$!
