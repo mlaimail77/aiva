@@ -14,7 +14,7 @@ warmup:
         timeout_s: 30
 inference:
     avatar:
-        default: "live_act"
+        default: "flash_head"
         runtime:
             cuda_visible_devices: "0"
             world_size: 1
