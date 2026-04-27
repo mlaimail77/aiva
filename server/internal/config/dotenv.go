@@ -59,27 +59,41 @@ func SaveDotenv(path string, updates map[string]string) error {
 	envMu.Lock()
 	defer envMu.Unlock()
 	log.Printf("FORCE LOG: Acquired mutex lock")
+
+	keys := make([]string, 0, len(updates))
+	values := make([]string, 0, len(updates))
+	for k, v := range updates {
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+
 	scriptCode := fmt.Sprintf(`
 import os
+import ast
+
+keys = %v
+values = %v
+
 lines = []
 if os.path.exists(%q):
     with open(%q) as f:
         lines = f.read().split('\\n')
 
+updates = dict(zip(keys, values))
 updated = {}
 for i, line in enumerate(lines):
     key = line.split('=')[0].strip() if '=' in line else ''
-    if key in %v:
-        lines[i] = f"{key}={%v[key]}"
+    if key in updates:
+        lines[i] = f"{key}={updates[key]}"
         updated[key] = True
 
-for key, val in %v.items():
+for key, val in updates.items():
     if key not in updated:
         lines.append(f"{key}={val}")
 
 with open(%q, 'w') as f:
     f.write('\\n'.join(lines) + '\\n')
-`, path, path, updates, updates, path)
+`, keys, values, path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
 	output, err := cmd.CombinedOutput()
