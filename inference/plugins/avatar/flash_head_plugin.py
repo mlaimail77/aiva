@@ -620,26 +620,83 @@ class FlashHeadAvatarPlugin(AvatarPlugin):
     def _generate_chunks_sync(self, audio_chunk: AudioChunk) -> Iterator[VideoChunk]:
         with self._lock:
             try:
+                logger.info("FlashHead _generate_chunks_sync START: pipeline=%s latent_motion_frames=%s", 
+                         self.pipeline is not None, 
+                         getattr(self.pipeline, "latent_motion_frames", None) is not None)
                 # If SetAvatar hasn't been called (or reset cleared state),
                 # skip generation rather than crashing the whole stream.
-                if self.pipeline is None or not hasattr(self.pipeline, "frame_num"):
+                if self.pipeline is None:
+                    logger.warning("FlashHead pipeline is None in _generate_chunks_sync")
+                    return
+                if not hasattr(self.pipeline, "frame_num"):
+                    logger.warning("FlashHead pipeline missing frame_num attribute")
+                    return
+                if getattr(self.pipeline, "latent_motion_frames", None) is None:
+                    logger.warning("FlashHead pipeline not prepared (latent_motion_frames missing)")
+                    # Try to reinitialize base data
+                    try:
+                        if self._default_avatar_path:
+                            logger.info("FlashHead: attempting to re-init base data")
+                            self._fn_get_base_data(
+                                self.pipeline,
+                                self._default_avatar_path,
+                                base_seed=9999,
+                                use_face_crop=False,
+                            )
+                            logger.info("FlashHead: re-init base data done, latent_motion_frames=%s", 
+                                     getattr(self.pipeline, "latent_motion_frames", None) is not None)
+                    except Exception as e:
+                        logger.exception("FlashHead: failed to re-init base data")
+                    return
+                if not hasattr(self.pipeline, "frame_num"):
                     logger.warning("FlashHead pipeline not prepared (frame_num missing)")
                     return
                 if getattr(self.pipeline, "latent_motion_frames", None) is None:
                     logger.warning("FlashHead pipeline not prepared (latent_motion_frames missing)")
+                    # Try to reinitialize base data
+                    try:
+                        if self._default_avatar_path:
+                            logger.info("FlashHead: attempting to re-init base data")
+                            self._fn_get_base_data(
+                                self.pipeline,
+                                self._default_avatar_path,
+                                base_seed=9999,
+                                use_face_crop=False,
+                            )
+                            logger.info("FlashHead: re-init base data done, latent_motion_frames=%s", 
+                                     getattr(self.pipeline, "latent_motion_frames", None) is not None)
+                    except Exception as e:
+                        logger.exception("FlashHead: failed to re-init base data")
+                    return
+                if not hasattr(self.pipeline, "frame_num"):
+                    logger.warning("FlashHead pipeline missing frame_num attribute")
+                    return
+                if getattr(self.pipeline, "latent_motion_frames", None) is None:
+                    logger.warning("FlashHead pipeline not prepared (latent_motion_frames missing)")
+                    # Try to reinitialize base data
+                    try:
+                        if self._default_avatar_path:
+                            logger.info("FlashHead: attempting to re-init base data")
+                            self._fn_get_base_data(
+                                self.pipeline,
+                                self._default_avatar_path,
+                                base_seed=9999,
+                                use_face_crop=False,
+                            )
+                    except Exception as e:
+                        logger.exception("FlashHead: failed to re-init base data")
                     return
 
-                logger.debug(
-                    "FlashHead recv AudioChunk: rank=%d bytes=%d sample_rate=%d channels=%d format=%s is_final=%s timestamp_ms=%d duration_ms=%d",
-                    self._rank,
-                    len(audio_chunk.data),
-                    int(audio_chunk.sample_rate or 0),
-                    int(audio_chunk.channels or 0),
-                    str(audio_chunk.format),
-                    bool(audio_chunk.is_final),
-                    int(audio_chunk.timestamp_ms or 0),
-                    int(audio_chunk.duration_ms or 0),
-                )
+                logger.info("FlashHead recv AudioChunk: rank=%d bytes=%d sample_rate=%d channels=%d format=%s is_final=%s timestamp_ms=%d duration_ms=%d pending_shape=%s",
+                        self._rank,
+                        len(audio_chunk.data),
+                        int(audio_chunk.sample_rate or 0),
+                        int(audio_chunk.channels or 0),
+                        str(audio_chunk.format),
+                        bool(audio_chunk.is_final),
+                        int(audio_chunk.timestamp_ms or 0),
+                        int(audio_chunk.duration_ms or 0),
+                        self._pending_audio.shape if hasattr(self, '_pending_audio') else 'N/A')
 
                 tgt_sr = int(self.infer_params["sample_rate"])
                 src_sr = int(audio_chunk.sample_rate or tgt_sr)

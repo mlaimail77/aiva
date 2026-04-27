@@ -500,7 +500,13 @@ loop:
 	default:
 	}
 	if len(rgbChunks) == 0 || width <= 0 || height <= 0 || totalFrames <= 0 {
-		log.Printf("WARNING: idle avatar generation produced no video frames, using placeholder")
+		log.Printf("WARNING: idle avatar generation produced no video frames, generating static placeholder")
+		// Generate a simple static idle video from the character image
+		staticPath := outPath + ".static.mp4"
+		if err := o.generateStaticIdleVideo(imageData, format, staticPath, idleDuration, idleSampleRate, idleCRF); err == nil {
+			return staticPath, nil
+		}
+		// If static generation fails, return empty string to use placeholder
 		return "", nil
 	}
 
@@ -1381,6 +1387,44 @@ func (o *Orchestrator) sessionRecordingDir(session *Session) string {
 	}
 	// Fallback: legacy timestamp-based dir
 	return time.Now().Format("20060102-150405")
+}
+
+// generateStaticIdleVideo creates a simple static idle video from a character image.
+// It uses ffmpeg to create a video with the static image repeated for the duration.
+func (o *Orchestrator) generateStaticIdleVideo(imageData []byte, format string, outputPath string, duration time.Duration, sampleRate int, crf int) error {
+	// Write image to temporary file
+	imgFile, err := os.CreateTemp("", "idle_img_*.png")
+	if err != nil {
+		return fmt.Errorf("create temp image: %w", err)
+	}
+	defer os.Remove(imgFile.Name())
+	defer imgFile.Close()
+
+	if _, err := imgFile.Write(imageData); err != nil {
+		return fmt.Errorf("write temp image: %w", err)
+	}
+	imgFile.Close()
+
+	// Use ffmpeg to create video from static image
+	// ffmpeg -loop 1 -i input.png -c:v libx264 -t 10 -pix_fmt yuv420p -vf scale=512:512 output.mp4
+	args := []string{
+		"-loop", "1",
+		"-i", imgFile.Name(),
+		"-c:v", "libx264",
+		"-t", fmt.Sprintf("%.1f", duration.Seconds()),
+		"-pix_fmt", "yuv420p",
+		"-vf", "scale=512:512",
+		"-crf", fmt.Sprintf("%d", crf),
+		"-y", // Overwrite output
+		outputPath,
+	}
+
+	cmd := exec.Command("ffmpeg", args...)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("ffmpeg failed: %w, output: %s", err, string(output))
+	}
+	return nil
 }
 
 // broadcastJSON marshals and broadcasts a JSON message.
