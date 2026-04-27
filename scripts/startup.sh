@@ -10,8 +10,8 @@ echo "[STARTUP] Starting AIVA services..."
 # Change to aiva directory
 cd /home/tomoyoukilai_gmail_com/aiva
 
-# Set PYTHONPATH to include flash_head src
-export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:$PYTHONPATH
+# Set PYTHONPATH to include flash_head src and user's site-packages
+export PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages:$PYTHONPATH
 
 # Ensure nginx is running
 echo "[STARTUP] Ensuring nginx is running..."
@@ -20,7 +20,7 @@ sudo systemctl restart nginx || true
 
 # Start Python inference server
 echo "[STARTUP] Starting Python inference server on port 50051..."
-nohup sudo -u tomoyoukilai_gmail_com python3 -m inference.server > /tmp/inference.log 2>&1 &
+PYTHONPATH=/home/tomoyoukilai_gmail_com/aiva/models/flash_head/src:/home/tomoyoukilai_gmail_com/.local/lib/python3.10/site-packages nohup sudo -u tomoyoukilai_gmail_com python3 -m inference.server > /tmp/inference.log 2>&1 &
 INFERENCE_PID=$!
 echo "[STARTUP] Inference server started with PID: $INFERENCE_PID"
 
