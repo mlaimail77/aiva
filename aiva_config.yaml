@@ -20,7 +20,7 @@ inference:
             world_size: 1
         flash_head:
             plugin_class: "inference.plugins.avatar.flash_head_plugin.FlashHeadAvatarPlugin"
-            models_dir: "./checkpoints"
+            models_dir: "./models/flash_head"
             checkpoint_dir: "./checkpoints/SoulX-FlashHead-1_3B"
             wav2vec_dir: "./checkpoints/japanese-wav2vec2-base"
             model_type: "lite"
