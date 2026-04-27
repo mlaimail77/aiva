@@ -21,10 +21,6 @@ class OpenRouterLLMPlugin(LLMPlugin):
         self.client = AsyncOpenAI(
             api_key=config.params.get("api_key"),
             base_url=config.params.get("base_url", "https://openrouter.ai/api/v1"),
-            http_headers={
-                "HTTP-Referer": "https://aiva.ai",
-                "X-OpenRouter-Title": "AIVA Digital Human",
-            },
         )
         self.model = config.params.get("model", "google/gemini-2.0-flash-001")
         self.temperature = float(config.params.get("temperature", 0.7))
