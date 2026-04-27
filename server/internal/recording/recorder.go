@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/cyberverse/server/internal/config"
+	"github.com/mlaimail77/aiva/internal/config"
 )
 
 // VideoRecorder is held by the Orchestrator and creates per-turn recordings.

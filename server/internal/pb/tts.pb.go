@@ -233,7 +233,7 @@ const file_tts_proto_rawDesc = "" +
 	"TTSService\x12E\n" +
 	"\x10SynthesizeStream\x12\x15.cyberverse.TextChunk\x1a\x16.cyberverse.AudioChunk(\x010\x01\x12K\n" +
 	"\n" +
-	"ListVoices\x12\x1d.cyberverse.ListVoicesRequest\x1a\x1e.cyberverse.ListVoicesResponseB*Z(github.com/cyberverse/server/internal/pbb\x06proto3"
+	"ListVoices\x12\x1d.cyberverse.ListVoicesRequest\x1a\x1e.cyberverse.ListVoicesResponseB*Z(github.com/mlaimail77/aiva/internal/pbb\x06proto3"
 
 var (
 	file_tts_proto_rawDescOnce sync.Once

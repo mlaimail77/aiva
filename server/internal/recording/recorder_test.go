@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cyberverse/server/internal/config"
+	"github.com/mlaimail77/aiva/internal/config"
 )
 
 func TestSaveTranscriptWritesTurnTextFile(t *testing.T) {

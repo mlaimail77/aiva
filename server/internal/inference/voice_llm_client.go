@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 // ConverseStream opens a bidirectional stream for voice-to-voice conversation.

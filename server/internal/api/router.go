@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/cyberverse/server/internal/character"
-	"github.com/cyberverse/server/internal/config"
-	"github.com/cyberverse/server/internal/livekit"
-	"github.com/cyberverse/server/internal/orchestrator"
-	"github.com/cyberverse/server/internal/ws"
+	"github.com/mlaimail77/aiva/internal/character"
+	"github.com/mlaimail77/aiva/internal/config"
+	"github.com/mlaimail77/aiva/internal/livekit"
+	"github.com/mlaimail77/aiva/internal/orchestrator"
+	"github.com/mlaimail77/aiva/internal/ws"
 )
 
 type Router struct {

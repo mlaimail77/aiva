@@ -1,7 +1,7 @@
 package livekit
 
 import (
-	"github.com/cyberverse/server/internal/mediapeer"
+	"github.com/mlaimail77/aiva/internal/mediapeer"
 )
 
 // Type aliases for backward compatibility — all code referencing

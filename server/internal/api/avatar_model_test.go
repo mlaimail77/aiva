@@ -12,11 +12,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cyberverse/server/internal/character"
-	"github.com/cyberverse/server/internal/config"
-	"github.com/cyberverse/server/internal/inference"
-	"github.com/cyberverse/server/internal/orchestrator"
-	pb "github.com/cyberverse/server/internal/pb"
+	"github.com/mlaimail77/aiva/internal/character"
+	"github.com/mlaimail77/aiva/internal/config"
+	"github.com/mlaimail77/aiva/internal/inference"
+	"github.com/mlaimail77/aiva/internal/orchestrator"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 type fakeInferenceService struct {

@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cyberverse/server/internal/character"
+	"github.com/mlaimail77/aiva/internal/character"
 )
 
 type characterResponse struct {

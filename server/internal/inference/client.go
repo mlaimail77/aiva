@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"

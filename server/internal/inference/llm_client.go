@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 // GenerateLLMStream sends a chat request and returns a channel of streaming LLM chunks.

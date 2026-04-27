@@ -9,9 +9,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/cyberverse/server/internal/livekit"
-	"github.com/cyberverse/server/internal/orchestrator"
-	"github.com/cyberverse/server/internal/ws"
+	"github.com/mlaimail77/aiva/internal/livekit"
+	"github.com/mlaimail77/aiva/internal/orchestrator"
+	"github.com/mlaimail77/aiva/internal/ws"
 )
 
 type CreateSessionRequest struct {

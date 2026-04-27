@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 // SetAvatar sends an image to the inference server to configure the avatar.

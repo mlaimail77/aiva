@@ -288,7 +288,7 @@ const file_llm_proto_rawDesc = "" +
 	"\bis_final\x18\x04 \x01(\bR\aisFinal2N\n" +
 	"\n" +
 	"LLMService\x12@\n" +
-	"\x0eGenerateStream\x12\x16.cyberverse.LLMRequest\x1a\x14.cyberverse.LLMChunk0\x01B*Z(github.com/cyberverse/server/internal/pbb\x06proto3"
+	"\x0eGenerateStream\x12\x16.cyberverse.LLMRequest\x1a\x14.cyberverse.LLMChunk0\x01B*Z(github.com/mlaimail77/aiva/internal/pbb\x06proto3"
 
 var (
 	file_llm_proto_rawDescOnce sync.Once

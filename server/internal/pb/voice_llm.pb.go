@@ -401,7 +401,7 @@ const file_voice_llm_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2\xa2\x01\n" +
 	"\x0fVoiceLLMService\x12E\n" +
 	"\bConverse\x12\x19.cyberverse.VoiceLLMInput\x1a\x1a.cyberverse.VoiceLLMOutput(\x010\x01\x12H\n" +
-	"\tInterrupt\x12\x1c.cyberverse.InterruptRequest\x1a\x1d.cyberverse.InterruptResponseB*Z(github.com/cyberverse/server/internal/pbb\x06proto3"
+	"\tInterrupt\x12\x1c.cyberverse.InterruptRequest\x1a\x1d.cyberverse.InterruptResponseB*Z(github.com/mlaimail77/aiva/internal/pbb\x06proto3"
 
 var (
 	file_voice_llm_proto_rawDescOnce sync.Once

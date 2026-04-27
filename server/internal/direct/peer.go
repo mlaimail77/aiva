@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cyberverse/server/internal/mediapeer"
+	"github.com/mlaimail77/aiva/internal/mediapeer"
 	"github.com/pion/interceptor/pkg/cc"
 	"github.com/pion/webrtc/v4"
 	"github.com/pion/webrtc/v4/pkg/media"

@@ -3,7 +3,7 @@ package inference
 import (
 	"context"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 // ChatMessage represents a single message in a conversation.

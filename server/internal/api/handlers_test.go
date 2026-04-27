@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cyberverse/server/internal/character"
-	"github.com/cyberverse/server/internal/orchestrator"
-	pb "github.com/cyberverse/server/internal/pb"
-	"github.com/cyberverse/server/internal/ws"
+	"github.com/mlaimail77/aiva/internal/character"
+	"github.com/mlaimail77/aiva/internal/orchestrator"
+	pb "github.com/mlaimail77/aiva/internal/pb"
+	"github.com/mlaimail77/aiva/internal/ws"
 )
 
 func newTestCharStore(t *testing.T) *character.Store {

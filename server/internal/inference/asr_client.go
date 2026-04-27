@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	pb "github.com/cyberverse/server/internal/pb"
+	pb "github.com/mlaimail77/aiva/internal/pb"
 )
 
 // TranscribeStream opens a bidirectional stream: sends audio chunks,

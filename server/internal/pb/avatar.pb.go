@@ -385,7 +385,7 @@ const file_avatar_proto_rawDesc = "" +
 	"\tSetAvatar\x12\x1c.cyberverse.SetAvatarRequest\x1a\x1d.cyberverse.SetAvatarResponse\x12D\n" +
 	"\x0eGenerateStream\x12\x16.cyberverse.AudioChunk\x1a\x16.cyberverse.VideoChunk(\x010\x01\x12<\n" +
 	"\x05Reset\x12\x18.cyberverse.ResetRequest\x1a\x19.cyberverse.ResetResponse\x12=\n" +
-	"\aGetInfo\x12\x1a.cyberverse.GetInfoRequest\x1a\x16.cyberverse.AvatarInfoB*Z(github.com/cyberverse/server/internal/pbb\x06proto3"
+	"\aGetInfo\x12\x1a.cyberverse.GetInfoRequest\x1a\x16.cyberverse.AvatarInfoB*Z(github.com/mlaimail77/aiva/internal/pbb\x06proto3"
 
 var (
 	file_avatar_proto_rawDescOnce sync.Once

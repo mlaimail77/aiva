@@ -104,7 +104,7 @@ const file_asr_proto_rawDesc = "" +
 	"confidence2Y\n" +
 	"\n" +
 	"ASRService\x12K\n" +
-	"\x10TranscribeStream\x12\x16.cyberverse.AudioChunk\x1a\x1b.cyberverse.TranscriptEvent(\x010\x01B*Z(github.com/cyberverse/server/internal/pbb\x06proto3"
+	"\x10TranscribeStream\x12\x16.cyberverse.AudioChunk\x1a\x1b.cyberverse.TranscriptEvent(\x010\x01B*Z(github.com/mlaimail77/aiva/internal/pbb\x06proto3"
 
 var (
 	file_asr_proto_rawDescOnce sync.Once

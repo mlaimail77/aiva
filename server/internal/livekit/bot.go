@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cyberverse/server/internal/mediapeer"
+	"github.com/mlaimail77/aiva/internal/mediapeer"
 	mediasdk "github.com/livekit/media-sdk"
 	protoLogger "github.com/livekit/protocol/logger"
 	lksdk "github.com/livekit/server-sdk-go/v2"
