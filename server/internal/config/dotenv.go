@@ -63,15 +63,17 @@ func SaveDotenv(path string, updates map[string]string) error {
 	keys := make([]string, 0, len(updates))
 	values := make([]string, 0, len(updates))
 	for k, v := range updates {
-		keys = append(keys, fmt.Sprintf("%q", k))
-		values = append(values, fmt.Sprintf("%q", v))
+		keys = append(keys, k)
+		values = append(values, v)
 	}
 
 	scriptCode := fmt.Sprintf(`
 import os
+import json
+import sys
 
-keys = [%s]
-values = [%s]
+keys = json.loads(%q)
+values = json.loads(%q)
 
 lines = []
 if os.path.exists(%q):
@@ -91,7 +93,7 @@ for key, val in updates.items():
 
 with open(%q, 'w') as f:
     f.write('\\n'.join(new_lines) + '\\n')
-`, strings.Join(keys, ","), strings.Join(values, ","), path, path, path)
+`, keys, values, path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
 	output, err := cmd.CombinedOutput()
