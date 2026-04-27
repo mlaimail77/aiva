@@ -90,7 +90,7 @@ sudo swapon /swapfile
 ### Step 1: Clone
 
 ```bash
-git clone https://github.com/dsd2077/CyberVerse.git
+git clone https://github.com/mlaimail77/aiva.git
 cd AIVA
 ```
 

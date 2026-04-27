@@ -39,9 +39,11 @@ type LiveKitSettings struct {
 }
 
 type LLMSettings struct {
-	APIKey      string  `json:"api_key"`
-	Model       string  `json:"model"`
-	Temperature float64 `json:"temperature"`
+	APIKey        string  `json:"api_key"`
+	Model        string  `json:"model"`
+	Temperature  float64 `json:"temperature"`
+	VisionAPIKey string  `json:"vision_api_key"`
+	VisionModel string  `json:"vision_model"`
 }
 
 type TTSSettings struct {
@@ -119,6 +121,8 @@ var settingsFields = []settingsField{
 	{"LLM_TEMPERATURE", func(s *SettingsResponse) string {
 		return strconv.FormatFloat(s.LLM.Temperature, 'f', -1, 64)
 	}},
+	{"VISION_LLM_API_KEY", func(s *SettingsResponse) string { return s.LLM.VisionAPIKey }},
+	{"VISION_LLM_MODEL", func(s *SettingsResponse) string { return s.LLM.VisionModel }},
 	{"TTS_MODEL", func(s *SettingsResponse) string { return s.TTS.Model }},
 	{"TTS_VOICE", func(s *SettingsResponse) string { return s.TTS.Voice }},
 	{"ASR_MODEL_SIZE", func(s *SettingsResponse) string { return s.ASR.ModelSize }},
@@ -140,9 +144,11 @@ func (r *Router) handleGetSettings(w http.ResponseWriter, req *http.Request) {
 			APISecret: envOrDefault("LIVEKIT_API_SECRET", r.cfg.LiveKit.APISecret),
 		},
 		LLM: LLMSettings{
-			APIKey:      os.Getenv("OPENAI_API_KEY"),
-			Model:       envOrDefault("OPENAI_MODEL", "google/gemini-2.0-flash-001"),
-			Temperature: envOrDefaultFloat("LLM_TEMPERATURE", 0.7),
+			APIKey:        os.Getenv("OPENAI_API_KEY"),
+			Model:         envOrDefault("OPENAI_MODEL", "google/gemini-2.0-flash-001"),
+			Temperature:  envOrDefaultFloat("LLM_TEMPERATURE", 0.7),
+			VisionAPIKey:  os.Getenv("VISION_LLM_API_KEY"),
+			VisionModel:  envOrDefault("VISION_LLM_MODEL", "google/gemini-2.0-flash-exp"),
 		},
 		TTS: TTSSettings{
 			Model: envOrDefault("TTS_MODEL", "tts-1"),
@@ -174,6 +180,7 @@ func (r *Router) handleUpdateSettings(w http.ResponseWriter, req *http.Request) 
 		if val == "" {
 			continue
 		}
+		log.Printf("[saveSettings] Saving %s = %s", f.envKey, val)
 		updates[f.envKey] = val
 	}
 

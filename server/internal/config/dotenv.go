@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -51,17 +52,50 @@ func LoadDotenv(path string) error {
 // updated in place; new keys are appended. The write is atomic (temp file +
 // rename) and protected by a package-level mutex.
 func SaveDotenv(path string, updates map[string]string) error {
+	log.Printf("===============================================")
+	log.Printf("FORCE LOG: SaveDotenv CALLED with path=%s", path)
+	log.Printf("FORCE LOG: updates = %v", updates)
+	log.Printf("===============================================")
 	envMu.Lock()
 	defer envMu.Unlock()
+	log.Printf("FORCE LOG: Acquired mutex lock")
+	scriptCode := fmt.Sprintf(`
+import os
+lines = []
+if os.path.exists(%q):
+    with open(%q) as f:
+        lines = f.read().split('\\n')
 
-	// Read existing lines (may not exist yet).
-	var lines []string
-	if data, err := os.ReadFile(path); err == nil {
-		lines = strings.Split(string(data), "\n")
+updated = {}
+for i, line in enumerate(lines):
+    key = line.split('=')[0].strip() if '=' in line else ''
+    if key in %v:
+        lines[i] = f"{key}={%v[key]}"
+        updated[key] = True
+
+for key, val in %v.items():
+    if key not in updated:
+        lines.append(f"{key}={val}")
+
+with open(%q, 'w') as f:
+    f.write('\\n'.join(lines) + '\\n')
+`, path, path, updates, updates, path)
+
+	cmd := exec.Command("python3", "-c", scriptCode)
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		return fmt.Errorf("python error: %v, output: %s", err, output)
 	}
+
+	log.Printf("[SaveDotenv] Successfully saved via Python: %v", updates)
+	return nil
+}
 
 	// Track which keys we've already updated in existing lines.
 	updated := make(map[string]bool, len(updates))
+
+	log.Printf("[SaveDotenv] Updates map: %v", updates)
 
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
@@ -73,9 +107,11 @@ func SaveDotenv(path string, updates map[string]string) error {
 			continue
 		}
 		key = strings.TrimSpace(key)
+		log.Printf("[SaveDotenv] Checking key=%s, exists=%v", key, updates[key])
 		if newVal, exists := updates[key]; exists {
 			lines[i] = fmt.Sprintf("%s=%s", key, newVal)
 			updated[key] = true
+			log.Printf("[SaveDotenv] Updated line %d: %s", i, lines[i])
 		}
 	}
 
@@ -91,6 +127,10 @@ func SaveDotenv(path string, updates map[string]string) error {
 		lines = lines[:len(lines)-1]
 	}
 	content := strings.Join(lines, "\n") + "\n"
+
+	log.Printf("[SaveDotenv] Final content (%d chars): %s", len(content), content)
+
+	// Atomic write: write to temp file, then rename.
 
 	// Atomic write: temp file in same dir, then rename.
 	dir := filepath.Dir(path)
