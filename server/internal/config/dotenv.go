@@ -75,8 +75,8 @@ func SaveDotenv(path string, updates map[string]string) error {
 import os
 import json
 
-keys = json.loads(%q)
-values = json.loads(%q)
+keys = json.loads(%s)
+values = json.loads(%s)
 
 lines = []
 if os.path.exists(%q):
@@ -96,7 +96,7 @@ for key, val in updates.items():
 
 with open(%q, 'w') as f:
     f.write('\\n'.join(new_lines) + '\\n')
-`, keysJSON, valuesJSON, path, path, path)
+`, string(keysJSON), string(valuesJSON), path, path, path)
 
 	cmd := exec.Command("python3", "-c", scriptCode)
 	output, err := cmd.CombinedOutput()
