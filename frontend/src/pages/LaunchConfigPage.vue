@@ -135,7 +135,7 @@ async function launch() {
   if (!activeAvatarModel.value) return
   connecting.value = true
   try {
-    const resp = await createSession(characterId.value, 'voice_llm')
+    const resp = await createSession(characterId.value)
     router.push({
       path: `/session/${resp.session_id}`,
       query: {

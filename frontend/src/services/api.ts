@@ -51,7 +51,7 @@ export interface HealthResponse {
   error?: string
 }
 
-export async function createSession(characterId: string, mode: string = 'voice_llm'): Promise<CreateSessionResponse> {
+export async function createSession(characterId: string, mode: string = 'text_llm'): Promise<CreateSessionResponse> {
   return request('/sessions', {
     method: 'POST',
     body: JSON.stringify({ character_id: characterId, mode }),
