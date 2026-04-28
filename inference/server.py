@@ -124,9 +124,12 @@ class InferenceServer:
                 if self.is_primary:
                     logger.info("Initialized default plugin: %s", full_name)
                 if category == "avatar" and self.is_primary:
-                    logger.info("Active avatar model initialized: %s", default_name)
+                    logger.info("Active avatar model initialized: %s", full_name)
             except Exception:
                 logger.exception("Failed to initialize plugin: %s", full_name)
+                # Continue to initialize other plugins instead of crashing
+                # The server will run without this plugin
+                continue
 
     def _register_grpc_services(self) -> None:
         avatar_pb2_grpc.add_AvatarServiceServicer_to_server(
