@@ -23,6 +23,17 @@ if [ ! -L /home/tomoyoukilai_gmail_com/aiva/models/flash_head/flash_head/ltx_vid
     cd /home/tomoyoukilai_gmail_com/aiva
 fi
 
+# Patch flash_head_model.py to fix n_frame shape mismatch
+echo "[STARTUP] Patching flash_head_model.py..."
+# Force vae_scale=4
+sed -i 's/vae_scale = vae_stride$$0$$/vae_scale = 4  # forced/' /home/tomoyoukilai_gmail_com/aiva/models/flash_head/flash_head/src/modules/flash_head_model.py
+# Force n_frame=4 in all rearrange calls
+sed -i 's/n_frame=self\.vae_scale/n_frame=4  # forced/' /home/tomoyoukilai_gmail_com/aiva/models/flash_head/flash_head/src/modules/flash_head_model.py
+# Delete .pyc and __pycache__ to avoid cached code
+find /home/tomoyoukilai_gmail_com/aiva/models/flash_head -name '*.pyc' -delete
+find /home/tomoyoukilai_gmail_com/aiva/models/flash_head -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null
+echo "[STARTUP] Patch applied."
+
 # Ensure nginx is running
 echo "[STARTUP] Ensuring nginx is running..."
 sudo systemctl enable nginx || true
