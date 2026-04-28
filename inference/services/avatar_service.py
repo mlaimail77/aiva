@@ -67,7 +67,16 @@ class AvatarGRPCService(avatar_pb2_grpc.AvatarServiceServicer):
             return avatar_pb2.ResetResponse(success=False)
 
     async def GetInfo(self, request, context):
-        plugin = self._get_plugin()
+        plugin = self._get_plugin_or_none()
+        if plugin is None:
+            return avatar_pb2.AvatarInfo(
+                model_name="no avatar plugin initialized",
+                output_fps=0,
+                output_width=0,
+                output_height=0,
+                frames_per_chunk=0,
+                chunk_duration_s=0,
+            )
         return avatar_pb2.AvatarInfo(
             model_name=plugin.name,
             output_fps=plugin.get_fps(),
