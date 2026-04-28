@@ -14,27 +14,25 @@ warmup:
         timeout_s: 30
 inference:
     avatar:
-        default: "live_act"
-        runtime:
-            cuda_visible_devices: "0"
-            world_size: 1
-        live_act:
-            plugin_class: "inference.plugins.avatar.live_act_plugin.LiveActAvatarPlugin"
-            models_dir: "./checkpoints/SoulX-LiveAct"
-            ckpt_dir: "./checkpoints/LiveAct"
-            wav2vec_dir: "./checkpoints/japanese-wav2vec2-base"
-            size: "320*480"
-            fps: 20
-            seed: 42
-            audio_cfg: 1.0
-            t5_cpu: false
-            fp8_kv_cache: false
-            offload_cache: false
-            block_offload: false
-            mean_memory: false
-            compile_wan_model: false
-            compile_vae_decode: false
-            default_prompt: "一个人在说话"
+        # Temporarily disable avatar plugins due to model weight mismatch
+        # default: "live_act"
+        # live_act:
+        #     plugin_class: "inference.plugins.avatar.live_act_plugin.LiveActAvatarPlugin"
+        #     models_dir: "./checkpoints/SoulX-LiveAct"
+        #     ckpt_dir: "./checkpoints/LiveAct"
+        #     wav2vec_dir: "./checkpoints/japanese-wav2vec2-base"
+        #     size: "320*480"
+        #     fps: 20
+        #     seed: 42
+        #     audio_cfg: 1.0
+        #     t5_cpu: false
+        #     fp8_kv_cache: false
+        #     offload_cache: false
+        #     block_offload: false
+        #     mean_memory: false
+        #     compile_wan_model: false
+        #     compile_vae_decode: false
+        #     default_prompt: "一个人在说话"
         flash_head:
             plugin_class: "inference.plugins.avatar.flash_head_plugin.FlashHeadAvatarPlugin"
             checkpoint_dir: "./checkpoints/SoulX-FlashHead-1_3B"
